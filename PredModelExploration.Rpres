@@ -1,0 +1,63 @@
+<style>
+span.courier {
+    font-family: "Courier New", Courier, monospace;
+}
+</style>
+
+Predictive Model Exploration Tool of Car Evaluation Data Set
+========================================================
+author: Hon Yung Ho
+date: `r format(Sys.time(), "%a %b %d %Y")`
+transition: rotate
+
+Predictive Model Exploration
+========================================================
+- Car Evaluation Data Set
+    + https://archive.ics.uci.edu/ml/datasets/Car+Evaluation  
+- We have to explore multiple predictive models
+    + Generalized Boosted Models (gbm)
+    + Linear Discriminant Analysis (lda)
+    + Random Forest (rf)
+    + Recursive Partitioning (rpart)
+- We also have to consider various sizes of the training data set 
+- Some predictive models take time to compute
+
+Predictive Model Exploration (cont'd)
+========================================================
+- Manual compilation of model accuracies of various models with various sizes of traing data set
+    + very time consuming
+    + error-prone
+
+```{r, echo=FALSE}
+library(ggplot2)
+accuDataFile <- "./app/data/accuracies.data"
+accuData <- read.table(accuDataFile, header = TRUE, sep = ",")
+head(accuData)
+```
+
+Accuracy Comparison in Chart
+========================================================
+- Would it be nice that the model accuracies can be compared in the form of a chart?
+
+```{r, echo=FALSE}
+accuDataMelt <- reshape2::melt(accuData, id = "percent")
+names(accuDataMelt)[2:3] <- c("model", "accuracy")
+
+```{r, echo=FALSE, fig.width=10, fig.height=6}
+g <- ggplot(accuDataMelt, aes(percent, accuracy, group = model, colour = model)) +
+    geom_line(size = 1) + geom_point(size = 3.5) + theme_bw() + 
+    geom_vline(aes(xintercept = 80), color = "blue", size = 0.6) +
+    labs(title = "Training Data of Sample Data Set vs. Accuracy") +
+    labs(x = "Training Data of Sample Data Set in Percentage") + 
+    labs(y = "Accuracy in Percentage")
+g
+```
+
+Solution
+========================================================
+- A Shiny App: [Predictive Model Exploration Tool](https://honho.shinyapps.io/DataProdApp)
+- What it offers:
+    + Confusion matrix and statistics of a selected model
+    + Training data set of selected size
+    + Model accuracies in the form of a chart
+    + Last but not lease: Efficiency and Accuracy!!
